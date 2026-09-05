@@ -24,7 +24,7 @@ router.post('/telegram', async (req, res): Promise<any> => {
     };
   } else {
     // Haqiqiy Telegram tekshiruvi (token atrofidagi bo'sh joylarni tozalash)
-    const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim();
+    const botToken = process.env.TELEGRAM_BOT_TOKEN?.replace(/^["']|["']$/g, '').trim();
     if (!botToken) {
       return res.status(500).json({ error: "Server xatosi: TELEGRAM_BOT_TOKEN o'rnatilmagan yoki noto'g'ri." });
     }
