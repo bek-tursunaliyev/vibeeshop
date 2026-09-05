@@ -4,9 +4,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 let dbUrl = process.env.DATABASE_URL || 'postgresql://dummy:dummy@localhost/dummy';
-if (dbUrl.includes('supabase.co') && !dbUrl.includes('sslmode=')) {
-  dbUrl += (dbUrl.includes('?') ? '&' : '?') + 'sslmode=require';
-}
 
 export default defineConfig({
   schema: './src/db/schema.ts',
@@ -14,5 +11,6 @@ export default defineConfig({
   dialect: 'postgresql',
   dbCredentials: {
     url: dbUrl,
+    ssl: dbUrl.includes('supabase.co') ? { rejectUnauthorized: false } : undefined
   },
 });

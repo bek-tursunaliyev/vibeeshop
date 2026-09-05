@@ -17,6 +17,8 @@ interface AuthContextType {
   isAdmin: boolean;
   previewMode: boolean;
   dbError: boolean;
+  authError: string | null;
+  debugInfo: string;
   togglePreviewMode: () => void;
   logout: () => void;
 }
@@ -29,6 +31,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [previewMode, setPreviewMode] = useState(false);
   const [dbError, setDbError] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
 
   useEffect(() => {
     const authenticate = async () => {
@@ -36,6 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         WebApp.ready();
         const initData = WebApp.initData;
         
+        setDebugInfo(`InitData mavjudligi: ${initData ? 'HA (uzunligi: ' + initData.length + ')' : 'YOQ'}`);
+
         // Agar Telegram ichida bo'lmasak, lokal test uchun admin sifatida kirish imkonini beramiz
         const isDev = import.meta.env.DEV;
         let body = { initData };
@@ -43,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
            console.log("Local development mode detected. Logging in as admin...");
            body = { initData: '', devModeId: 8594155055 } as any;
         } else if (!initData) {
+           setAuthError("Telegram muhiti aniqlanmadi (initData bo'sh). Iltimos, ilovani Telegram ichida oching.");
            setIsLoading(false);
            return;
         }
@@ -54,17 +61,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         if (res.ok) {
-          const data = await res.json();
-          setToken(data.token);
-          setUser(data.user);
-          localStorage.setItem('token', data.token);
+          const textResponse = await res.text();
+          try {
+            const data = JSON.parse(textResponse);
+            setToken(data.token);
+            setUser(data.user);
+            setAuthError(null);
+            localStorage.setItem('token', data.token);
+          } catch (e) {
+            setAuthError("Server noto'g'ri javob qaytardi (HTML). Server xatosi yoki manzil xato.");
+            setDebugInfo(`Status: ${res.status}. Javob xatosi: HTML qaytdi.`);
+            console.error("Auth JSON parse error. Response was:", textResponse.substring(0, 100));
+          }
         } else if (res.status === 503) {
           setDbError(true);
         } else {
-          console.error("Auth failed:", await res.text());
+          const errData = await res.json().catch(() => ({ error: "Noma'lum xatolik" }));
+          setAuthError(errData.error || "Server xatosi (Autentifikatsiya muvaffaqiyatsiz)");
+          console.error("Auth failed:", errData);
         }
       } catch (err) {
         console.error("Auth process error", err);
+        setAuthError("Internet yoki server bilan ulanishda xatolik.");
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = user?.role === 'admin' && !previewMode;
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, isAdmin, previewMode, dbError, togglePreviewMode, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, isAdmin, previewMode, dbError, authError, debugInfo, togglePreviewMode, logout }}>
       {children}
     </AuthContext.Provider>
   );

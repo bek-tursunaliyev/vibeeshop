@@ -5,15 +5,16 @@ import * as schema from './schema';
 
 let connectionString = process.env.DATABASE_URL;
 
-// Add sslmode=require for Supabase if not present
-if (connectionString && connectionString.includes('supabase.co') && !connectionString.includes('sslmode=')) {
-  connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require';
+const poolConfig: any = {
+  connectionString: connectionString || 'postgresql://dummy:dummy@localhost/dummy',
+};
+
+if (connectionString && connectionString.includes('supabase.co')) {
+  poolConfig.ssl = { rejectUnauthorized: false };
 }
 
 // We initialize a pool if the connection string is provided.
-export const pool = new Pool({
-  connectionString: connectionString || 'postgresql://dummy:dummy@localhost/dummy',
-});
+export const pool = new Pool(poolConfig);
 
 export const db = drizzle(pool, { schema });
 

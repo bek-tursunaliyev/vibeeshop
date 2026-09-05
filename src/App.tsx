@@ -6,11 +6,37 @@ import { ShoppingCart, Home, User, Settings, PackageSearch, LayoutDashboard } fr
 
 // === Layouts ===
 const Layout = () => {
-  const { user, isAdmin, previewMode, togglePreviewMode } = useAuth();
+  const { user, isAdmin, previewMode, togglePreviewMode, authError, debugInfo } = useAuth();
   const { cartCount } = useCart();
   
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center p-4">Ilovadan foydalanish uchun Telegram orqali kiring.</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white p-6 rounded-2xl shadow-sm max-w-sm w-full">
+          <h2 className="text-xl font-bold mb-4">Kirish xatosi</h2>
+          {authError ? (
+            <div className="text-left space-y-4">
+              <p className="text-red-500 font-medium text-sm">{authError}</p>
+              
+              <div className="bg-gray-100 p-2 rounded text-xs text-gray-500 break-words">
+                Debug: {debugInfo}
+              </div>
+              
+              <div className="text-sm text-gray-600">
+                <p className="font-bold mb-1">Qanday tuzatish mumkin?</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>.env fayldagi TELEGRAM_BOT_TOKEN to'g'riligiga ishonch hosil qiling.</li>
+                  <li>Token atrofida bo'sh joylar (probel/enter) qolib ketmaganligini tekshiring.</li>
+                  <li>Loyihani yopib qayta oching (yoki Restart dev server qiling).</li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-500">Ilovadan foydalanish uchun kiring...</p>
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (

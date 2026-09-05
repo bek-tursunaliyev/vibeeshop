@@ -23,16 +23,16 @@ router.post('/telegram', async (req, res): Promise<any> => {
       language_code: 'uz'
     };
   } else {
-    // Haqiqiy Telegram tekshiruvi
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    // Haqiqiy Telegram tekshiruvi (token atrofidagi bo'sh joylarni tozalash)
+    const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim();
     if (!botToken) {
-      return res.status(500).json({ error: "Server xatosi: Bot token o'rnatilmagan" });
+      return res.status(500).json({ error: "Server xatosi: TELEGRAM_BOT_TOKEN o'rnatilmagan yoki noto'g'ri." });
     }
     
     telegramUser = validateTelegramInitData(initData, botToken);
     
     if (!telegramUser) {
-      return res.status(401).json({ error: "Telegram autentifikatsiyasi xato" });
+      return res.status(401).json({ error: "Telegram autentifikatsiyasi xato (Kiritilgan bot token noto'g'ri bo'lishi mumkin)" });
     }
   }
 
