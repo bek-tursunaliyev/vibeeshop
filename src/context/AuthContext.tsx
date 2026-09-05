@@ -56,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         const res = await fetch('/api/auth/telegram', {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
@@ -76,7 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else if (res.status === 503) {
           setDbError(true);
         } else {
-          const errData = await res.json().catch(() => ({ error: "Noma'lum xatolik" }));
+          const textResponse = await res.text();
+          let errData;
+          try {
+            errData = JSON.parse(textResponse);
+          } catch(e) {
+            errData = { error: `Serverdan xato javob (${res.status}): ${textResponse.substring(0, 50)}` };
+          }
           setAuthError(errData.error || "Server xatosi (Autentifikatsiya muvaffaqiyatsiz)");
           console.error("Auth failed:", errData);
         }

@@ -1,0 +1,11 @@
+HTTP/2 302 
+content-type: text/html
+set-cookie: __SECURE-aistudio_auth_flow_may_set_cookies=true; Path=/; Secure; SameSite=None; Domain=ais-dev-fc3zgwkk2l7bpsqevokofl-138876150241.asia-east1.run.app; Partitioned; Max-Age=60;
+location: /__cookie_check.html?return_url=https%3A%2F%2Fais-dev-fc3zgwkk2l7bpsqevokofl-138876150241.asia-east1.run.app%2Fapi%2Fauth%2Ftelegram
+content-security-policy: frame-ancestors 'self' https://*.google.com https://localhost.corp.google.com:26001;
+x-cloud-trace-context: c3e2076539d2a578d81c2264177e0409
+date: Sat, 05 Sep 2026 09:43:28 GMT
+server: Google Frontend
+content-length: 200
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+
