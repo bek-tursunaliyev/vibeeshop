@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
            return;
         }
 
-        const res = await fetch('/api/auth/telegram', {
+        const res = await fetch('https://vibe-shop-62408785497.asia-east1.run.app/api/auth/telegram', {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
