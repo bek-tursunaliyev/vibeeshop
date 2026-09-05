@@ -1,11 +1,35 @@
-<div align="center">
+# Telegram Mini App - E-commerce (Uzbek)
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Bu to'liq ishlaydigan, real e-commerce Telegram Mini App loyihasi.
 
-  <h1>Built with AI Studio</h2>
+## Stack
+- Frontend: React (Vite), TailwindCSS, @twa-dev/sdk
+- Backend: Node.js, Express, Drizzle ORM
+- Ma'lumotlar bazasi: PostgreSQL
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Ishga tushirish
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+1. `.env` faylini yarating va ma'lumotlarni to'ldiring:
+```env
+TELEGRAM_BOT_TOKEN="sizning_bot_tokeningiz"
+ADMIN_TELEGRAM_ID="8594155055"
+DATABASE_URL="postgresql://user:pass@host/db"
+```
 
-</div>
+2. Paketlarni o'rnating:
+```bash
+npm install
+```
+
+3. Ma'lumotlar bazasini yangilang (Jadvallarni yaratish):
+```bash
+npm run db:push
+```
+
+4. Serverni ishga tushiring:
+```bash
+npm run dev
+```
+
+## Admin Huquqlari
+`ADMIN_TELEGRAM_ID` muhit o'zgaruvchisida belgilangan Telegram ID ga ega foydalanuvchi avtomatik tarzda admin huquqiga ega bo'ladi. U barcha mahsulotlar, buyurtmalar va kategoriyalarni boshqarishi hamda "Preview Mode" orqali mijoz interfeysini ko'rishi mumkin.
